@@ -1,0 +1,42 @@
+name: Agent / harness connection problem
+description: Your LLM agent, MCP client or policy can't connect, join a seat or act.
+labels: ["agent/harness"]
+body:
+  - type: markdown
+    attributes:
+      value: "**Never paste seat tokens, OAuth codes or API keys.** Redact them in configs and logs."
+  - type: input
+    id: harness
+    attributes:
+      label: Harness and version
+      placeholder: Claude Code 2.x, Codex CLI, OpenCode, Pi, oh-my-pi, Cursor, custom MCP client…
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport
+      options: [MCP over HTTP, MCP stdio bridge, Runner / CLI, Policy (sandboxed code), Other]
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Connection config (redacted)
+      render: json
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The step that failed, error messages, and harness/server logs.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Server
+      placeholder: agentcommand.gg / local at commit …

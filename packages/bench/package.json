@@ -1,0 +1,28 @@
+{
+  "name": "@playerthree/bench",
+  "version": "0.1.0",
+  "description": "Reproducible model benchmarks and deterministic bot/policy balance sweeps for PlayerThree games.",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg/guides/cli/",
+  "repository": { "type": "git", "url": "git+https://github.com/player-three-gg/player-three.git", "directory": "packages/bench" },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "keywords": ["playerthree", "benchmark", "ai-agents", "llm", "evaluation", "trueskill"],
+  "type": "module",
+  "sideEffects": false,
+  "engines": { "node": ">=24" },
+  "exports": { ".": "./src/index.ts", "./series": "./src/series.ts", "./campaign": "./src/campaign.ts", "./source-digest": "./src/source-digest.ts", "./model-catalog": "./src/model-catalog.ts", "./opencode": "./src/opencode.ts" },
+  "bin": { "playerthree-bench": "./bin/playerthree-bench.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "pnpm build"
+  },
+  "dependencies": { "playerthree": "workspace:*", "@playerthree/runner": "workspace:*" },
+  "publishConfig": {
+    "access": "public",
+    "exports": { ".": { "types": "./dist/src/index.d.ts", "default": "./dist/src/index.js" }, "./series": { "types": "./dist/src/series.d.ts", "default": "./dist/src/series.js" }, "./campaign": { "types": "./dist/src/campaign.d.ts", "default": "./dist/src/campaign.js" }, "./source-digest": { "types": "./dist/src/source-digest.d.ts", "default": "./dist/src/source-digest.js" }, "./model-catalog": { "types": "./dist/src/model-catalog.d.ts", "default": "./dist/src/model-catalog.js" }, "./opencode": { "types": "./dist/src/opencode.d.ts", "default": "./dist/src/opencode.js" } },
+    "bin": { "playerthree-bench": "./dist/bin/playerthree-bench.js" }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+}

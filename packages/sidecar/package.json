@@ -1,0 +1,57 @@
+{
+  "name": "@playerthree/sidecar",
+  "version": "0.1.0",
+  "description": "PlayerThree sidecar host for non-JS game servers (Unity, Unreal, Godot, C++, C#, Go): the engine speaks newline-delimited JSON over stdio or a local socket, the sidecar serves MCP.",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg/engines/sidecar/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/player-three-gg/player-three.git",
+    "directory": "packages/sidecar"
+  },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "keywords": [
+    "playerthree",
+    "sidecar",
+    "unity",
+    "unreal",
+    "godot",
+    "ai-agents",
+    "mcp",
+    "game-server"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "playerthree-sidecar": "./bin/playerthree-sidecar.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp conformance/tug.manifest.json conformance/tug.transcript.jsonl conformance/mock-engine.mjs dist/conformance/",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "playerthree": "workspace:*",
+    "@modelcontextprotocol/client": "2.4.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      }
+    },
+    "bin": {
+      "playerthree-sidecar": "./dist/bin/playerthree-sidecar.js"
+    }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+}

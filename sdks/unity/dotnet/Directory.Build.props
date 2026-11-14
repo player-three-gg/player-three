@@ -1,0 +1,10 @@
+<Project>
+  <!-- C# 9 is what Unity 2021.2+ compiles, so the shared sources stay within it. -->
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>
