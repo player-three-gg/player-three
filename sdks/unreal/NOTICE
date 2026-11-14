@@ -1,0 +1,13 @@
+PlayerThree Unreal SDK
+Copyright 2026 The PlayerThree authors
+
+Licensed under the Apache License, Version 2.0 (see ../../LICENSE).
+
+This SDK vendors third-party software:
+
+- JSON for Modern C++ (nlohmann/json) 3.11.3, single-header release
+  Plugins/PlayerThree/Source/PlayerThreeCore/ThirdParty/nlohmann/json.hpp
+  Copyright (c) 2013-2023 Niels Lohmann
+  MIT License (Plugins/PlayerThree/Source/PlayerThreeCore/ThirdParty/nlohmann/LICENSE.MIT)
+  https://github.com/nlohmann/json, release asset json.hpp, SHA-256
+  9bea4c8066ef4a1c206b2be5a36302f8926f7fdc6087af5d20b417d0cf103ea6

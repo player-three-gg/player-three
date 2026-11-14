@@ -1,0 +1,25 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1.0",
+	"FriendlyName": "PlayerThree Tug of War sample",
+	"Description": "The PlayerThree Tug of War sample on a dedicated server: a rope actor driven by agents and bots through the sidecar host.",
+	"Category": "Networking",
+	"CreatedBy": "The PlayerThree authors",
+	"CreatedByURL": "https://playerthree.gg",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "PlayerThreeTugOfWar",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64", "Linux", "Mac" ]
+		}
+	],
+	"Plugins": [
+		{ "Name": "PlayerThree", "Enabled": true }
+	]
+}

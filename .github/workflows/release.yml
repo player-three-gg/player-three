@@ -1,0 +1,94 @@
+# npm release; the process is in CONTRIBUTING.md, "Package names and publishing".
+#
+# On main: with pending changesets, open or update the "release: version packages" PR; with none, publish every
+# package version not yet on npm (`pnpm release`: `changeset publish`, dist-tag `latest`, or `next` for a suffixed
+# version such as 0.2.0-next.0) and tag it. Manual runs default to a dry run. Push-triggered runs stay off until the repository
+# variable RELEASE_ENABLED is `true`; manual runs always run.
+#
+# Auth: first the NPM_TOKEN secret (granular access token, read and write, bypass 2FA), then npm trusted publishing
+# (OIDC through `id-token: write`) bound to this file, release.yml, after which the secret is deleted. The npm CLI
+# tries OIDC before the token, so this file does not change between the two.
+# Provenance: npm refuses provenance from a private repository, so it is requested only while the repository is
+# public; trusted publishing from a public repository adds it by itself.
+name: Release
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run: verify, then `pnpm release --dry-run`; publishes nothing'
+        type: boolean
+        default: true
+
+permissions: {}
+
+# One release at a time; never cancel one that is publishing.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.repository == 'player-three-gg/player-three' && (github.event_name == 'workflow_dispatch' || vars.RELEASE_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.22.0
+      # No dependency cache in release builds (cache poisoning).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r typecheck
+      # Packs every package (prepack builds dist/), installs the tarballs into a fresh project and exercises them.
+      - run: pnpm verify-pack
+
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # version commits, git tags, GitHub releases
+      pull-requests: write # the version packages PR
+      id-token: write # npm trusted publishing and provenance
+    env:
+      NPM_CONFIG_PROVENANCE: ${{ github.event.repository.private && 'false' || 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.22.0
+      # registry-url writes an .npmrc that reads NODE_AUTH_TOKEN. Node 26 bundles npm 11.5.1+, which OIDC needs.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org
+      - run: npm --version
+      - run: pnpm install --frozen-lockfile
+
+      - name: Publish (dry run)
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        run: pnpm release --dry-run
+
+      - name: Version packages PR, or publish
+        if: github.event_name == 'push' || !inputs.dry_run
+        uses: changesets/action@v2
+        with:
+          version-script: pnpm version-packages
+          publish-script: pnpm release
+          commit-message: 'release: version packages'
+          pr-title: 'release: version packages'
+        env:
+          # Token auth only. Once the secret is deleted this is empty and npm authenticates with OIDC.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

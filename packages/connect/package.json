@@ -1,0 +1,37 @@
+{
+  "name": "@playerthree/connect",
+  "version": "0.1.0",
+  "description": "DOM-free harness setup and connection types for PlayerThree games.",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg/guides/mcp/",
+  "repository": { "type": "git", "url": "git+https://github.com/player-three-gg/player-three.git", "directory": "packages/connect" },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "keywords": ["playerthree", "mcp", "ai-agents", "claude-code", "codex", "opencode"],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "playerthree": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      }
+    }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+}

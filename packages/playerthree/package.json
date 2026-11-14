@@ -1,0 +1,122 @@
+{
+  "name": "playerthree",
+  "version": "0.1.0",
+  "description": "Give your multiplayer game seats AI agents can sit in: MCP seat server, sandboxed policies, DevTools, results, ratings and a signed commander log.",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg",
+  "repository": { "type": "git", "url": "git+https://github.com/player-three-gg/player-three.git", "directory": "packages/playerthree" },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "keywords": ["playerthree", "ai-agents", "llm", "mcp", "multiplayer", "game-server", "game-ai", "benchmark", "sdk"],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./manifest": "./src/manifest.ts",
+    "./arena": "./src/arena.ts",
+    "./results": "./src/results.ts",
+    "./benchmark": "./src/benchmark.ts",
+    "./benchmark-store": "./src/benchmark-store.ts",
+    "./control": "./src/control.ts",
+    "./protocol": "./src/protocol.ts",
+    "./signals": "./src/signals.ts",
+    "./delta": "./src/delta.ts",
+    "./host": "./src/host/index.ts",
+    "./policy": "./src/policy/index.ts",
+    "./mcp": "./src/mcp/index.ts",
+    "./devtools": "./src/devtools/index.ts",
+    "./postgres": "./src/postgres/index.ts",
+    "./postgres/reset": "./src/postgres/reset.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/devtools/page.html src/devtools/page.css src/devtools/page.js src/devtools/logo.webp src/devtools/icon.png dist/src/devtools/ && mkdir -p dist/src/postgres/migrations && cp src/postgres/migrations/*.sql dist/src/postgres/migrations/",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@modelcontextprotocol/server": "2.4.0",
+    "esbuild": "0.27.7",
+    "pg": "8.23.1",
+    "quickjs-emscripten": "0.32.0",
+    "ts-trueskill": "5.1.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.15",
+    "@electric-sql/pglite-socket": "0.2.18",
+    "@types/pg": "8.23.1",
+    "wabt": "1.0.39"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      },
+      "./arena": {
+        "types": "./dist/src/arena.d.ts",
+        "default": "./dist/src/arena.js"
+      },
+      "./results": {
+        "types": "./dist/src/results.d.ts",
+        "default": "./dist/src/results.js"
+      },
+      "./benchmark": { "types": "./dist/src/benchmark.d.ts", "default": "./dist/src/benchmark.js" },
+      "./benchmark-store": { "types": "./dist/src/benchmark-store.d.ts", "default": "./dist/src/benchmark-store.js" },
+      "./schema": {
+        "types": "./dist/src/schema.d.ts",
+        "default": "./dist/src/schema.js"
+      },
+      "./manifest": {
+        "types": "./dist/src/manifest.d.ts",
+        "default": "./dist/src/manifest.js"
+      },
+      "./control": {
+        "types": "./dist/src/control.d.ts",
+        "default": "./dist/src/control.js"
+      },
+      "./protocol": {
+        "types": "./dist/src/protocol.d.ts",
+        "default": "./dist/src/protocol.js"
+      },
+      "./signals": {
+        "types": "./dist/src/signals.d.ts",
+        "default": "./dist/src/signals.js"
+      },
+      "./delta": {
+        "types": "./dist/src/delta.d.ts",
+        "default": "./dist/src/delta.js"
+      },
+      "./host": {
+        "types": "./dist/src/host/index.d.ts",
+        "default": "./dist/src/host/index.js"
+      },
+      "./policy": {
+        "types": "./dist/src/policy/index.d.ts",
+        "default": "./dist/src/policy/index.js"
+      },
+      "./mcp": {
+        "types": "./dist/src/mcp/index.d.ts",
+        "default": "./dist/src/mcp/index.js"
+      },
+      "./devtools": {
+        "types": "./dist/src/devtools/index.d.ts",
+        "default": "./dist/src/devtools/index.js"
+      },
+      "./postgres": {
+        "types": "./dist/src/postgres/index.d.ts",
+        "default": "./dist/src/postgres/index.js"
+      },
+      "./postgres/reset": {
+        "types": "./dist/src/postgres/reset.d.ts",
+        "default": "./dist/src/postgres/reset.js"
+      }
+    }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+}

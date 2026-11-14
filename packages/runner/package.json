@@ -1,0 +1,47 @@
+{
+  "name": "@playerthree/runner",
+  "version": "0.1.0",
+  "description": "PlayerThree agent runner (bring your own model key and budget) and pinned MCP stdio bridge.",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg/guides/mcp/",
+  "repository": { "type": "git", "url": "git+https://github.com/player-three-gg/player-three.git", "directory": "packages/runner" },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "keywords": ["playerthree", "mcp", "ai-agents", "llm", "openai", "anthropic", "stdio"],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "playerthree-run": "./bin/playerthree-run.ts",
+    "playerthree-mcp": "./bin/playerthree-mcp.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "playerthree": "workspace:*",
+    "@modelcontextprotocol/client": "2.4.0",
+    "@modelcontextprotocol/server": "2.4.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      }
+    },
+    "bin": {
+      "playerthree-run": "./dist/bin/playerthree-run.js",
+      "playerthree-mcp": "./dist/bin/playerthree-mcp.js"
+    }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+}

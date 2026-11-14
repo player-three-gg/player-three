@@ -1,0 +1,243 @@
+# Engine sidecar and engine SDKs: the sidecar's tests and mock-engine conformance, then each SDK (Godot, Unity/.NET,
+# Unreal/C++) against the real conformance runner (packages/sidecar/conformance/run.ts) over stdio and a socket.
+# ci.yml already typechecks the workspace and runs every package's vitest suite.
+#
+# OS matrix and private-repo minutes: macOS runners bill 10× and Windows 2× the Linux rate. The full OS matrix
+# (ubuntu, windows, macos) runs on pushes to main and on workflow_dispatch (Actions → Engines → Run workflow, any
+# branch); pull requests and pushes to other branches run ubuntu only. The condition is repeated in each matrix
+# because `strategy` cannot read workflow `env`:
+#   github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+name: Engines
+on:
+  push:
+    paths:
+      - 'packages/sidecar/**'
+      - 'packages/playerthree/**'
+      - 'sdks/**'
+      - '.github/workflows/engines.yml'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+  pull_request:
+    paths:
+      - 'packages/sidecar/**'
+      - 'packages/playerthree/**'
+      - 'sdks/**'
+      - '.github/workflows/engines.yml'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  DOTNET_NOLOGO: '1'
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  # Every job tees its runner output here and uploads it when the job fails.
+  LOGS: ${{ github.workspace }}/ci-logs
+
+jobs:
+  sidecar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.22.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --filter '@playerthree/sidecar...'
+      - run: mkdir -p "$LOGS"
+      - run: pnpm --filter @playerthree/sidecar exec vitest run --maxWorkers=2
+      - name: conformance (mock engine, stdio)
+        run: node packages/sidecar/conformance/mock-engine.mjs -- node packages/sidecar/conformance/run.ts --stdio 2>&1 | tee "$LOGS/conformance-stdio.log"
+      - name: conformance (mock engine, socket)
+        run: node packages/sidecar/conformance/run.ts --socket -- node packages/sidecar/conformance/mock-engine.mjs 2>&1 | tee "$LOGS/conformance-socket.log"
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logs-sidecar
+          path: ci-logs
+          if-no-files-found: ignore
+
+  godot:
+    name: godot ${{ matrix.godot }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON((github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && '["ubuntu-latest","windows-latest","macos-latest"]' || '["ubuntu-latest"]') }}
+        # The addon's minimum (abstract classes) and the version it is developed on.
+        godot: ['4.5', '4.7.2']
+        exclude:
+          - os: macos-latest  # 10× minutes: the current version only
+            godot: '4.5'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.22.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --filter '@playerthree/sidecar...'
+      - uses: actions/cache@v6
+        id: godot-cache
+        with:
+          path: ~/.cache/godot/${{ matrix.godot }}
+          key: godot-${{ matrix.godot }}-${{ runner.os }}
+      - name: download Godot ${{ matrix.godot }} (official release, SHA-512 checked)
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          v='${{ matrix.godot }}-stable'
+          # From each release's SHA512-SUMS.txt (github.com/godotengine/godot/releases).
+          case "${{ matrix.godot }}/$RUNNER_OS" in
+            4.5/Linux)     asset=linux.x86_64.zip;    sum=b5bd5d8a4dd3f44de1d123361beabaafa4825dd05b5e20fd2bfa540f32594f81d82e7c4e86fae420f4faee77d9def573b570f8b156e9c84a4dc2d5123d09e852 ;;
+            4.5/Windows)   asset=win64.exe.zip;       sum=e8ef4867466bb01a2b762c4ec404f54266b40a5cbba0efa95e3ab325cd7d349b5dc11259e1c1525195080dc82294ff28044f7ac4acad833e4b054b4257e9aa1a ;;
+            4.5/macOS)     asset=macos.universal.zip; sum=59d195d1876210fa0f8c36bc10b147339fc8e076c684b74111533992f1a1dcdc0f760461f4cadad627e5b11e74468b54b9355fc6ea0c507c52533dfa7aa0c617 ;;
+            4.7.2/Linux)   asset=linux.x86_64.zip;    sum=9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65 ;;
+            4.7.2/Windows) asset=win64.exe.zip;       sum=83decd58fdf67b9d657958a1ae6bf1929c20785315a81effe245874cdc57acb709bf868e00778a96984338c1b29dafdb453c6847747694621c6ecf5da2259993 ;;
+            4.7.2/macOS)   asset=macos.universal.zip; sum=38aa16e5bba2083941fc5b3e54be0089bd4cc35e32415f5b9fd9a8a6a7b9818255d44532ea8ef94b5aef56c4b407c2d634fa4f657e4ebe681ebbf59b7bac69ca ;;
+            *) echo "no pinned Godot for ${{ matrix.godot }} on $RUNNER_OS"; exit 1 ;;
+          esac
+          dir="$HOME/.cache/godot/${{ matrix.godot }}"
+          mkdir -p "$dir"
+          curl -fsSL --retry 3 -o "$dir/godot.zip" "https://github.com/godotengine/godot/releases/download/$v/Godot_v${v}_${asset}"
+          if command -v sha512sum >/dev/null; then echo "$sum  $dir/godot.zip" | sha512sum -c -; else echo "$sum  $dir/godot.zip" | shasum -a 512 -c -; fi
+          unzip -q "$dir/godot.zip" -d "$dir"
+          rm "$dir/godot.zip"
+      - name: locate Godot
+        run: |
+          dir="$HOME/.cache/godot/${{ matrix.godot }}"
+          v='${{ matrix.godot }}-stable'
+          case "$RUNNER_OS" in
+            Linux)   bin="$dir/Godot_v${v}_linux.x86_64" ;;
+            # The console wrapper keeps stdout/stderr and the exit code attached to the shell.
+            Windows) bin="$dir/Godot_v${v}_win64_console.exe" ;;
+            macOS)   bin="$dir/Godot.app/Contents/MacOS/Godot" ;;
+          esac
+          chmod +x "$bin" || true
+          "$bin" --version
+          echo "GODOT=$bin" >> "$GITHUB_ENV"
+          mkdir -p "$LOGS"
+      - name: import
+        run: '"$GODOT" --headless --path sdks/godot --import 2>&1 | tee "$LOGS/import.log"'
+      - name: tests
+        run: '"$GODOT" --headless --path sdks/godot --script res://tests/run_tests.gd 2>&1 | tee "$LOGS/tests.log"'
+      - name: conformance (stdio)
+        run: '"$GODOT" --headless --path sdks/godot -- --conformance 2>&1 | tee "$LOGS/conformance-stdio.log"'
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logs-godot-${{ matrix.godot }}-${{ matrix.os }}
+          path: ci-logs
+          if-no-files-found: ignore
+
+  dotnet:
+    name: dotnet (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON((github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && '["ubuntu-latest","windows-latest","macos-latest"]' || '["ubuntu-latest"]') }}
+    defaults:
+      run:
+        # Job defaults replace the workflow's, so the shell is repeated here.
+        shell: bash
+        working-directory: sdks/unity/dotnet
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.22.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --filter '@playerthree/sidecar...'
+        working-directory: .
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+      - run: mkdir -p "$LOGS"
+      - run: dotnet test PlayerThree.Sidecar.Tests --logger "trx;LogFileName=tests.trx" --results-directory "$LOGS/dotnet-tests"
+      - run: dotnet build TugOfWar.Console
+      - name: conformance (stdio)
+        run: dotnet run --no-build --project TugOfWar.Console -- node ../../../packages/sidecar/conformance/run.ts --stdio 2>&1 | tee "$LOGS/conformance-stdio.log"
+      - name: conformance (socket; a named pipe on Windows)
+        run: node ../../../packages/sidecar/conformance/run.ts --socket -- dotnet run --no-build --project TugOfWar.Console 2>&1 | tee "$LOGS/conformance-socket.log"
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logs-dotnet-${{ matrix.os }}
+          path: ci-logs
+          if-no-files-found: ignore
+
+  cpp:
+    name: cpp ${{ matrix.compiler }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON((github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && '["ubuntu-latest","windows-latest","macos-latest"]' || '["ubuntu-latest"]') }}
+        # default: g++ with ASan/UBSan on ubuntu, MSVC on windows, AppleClang on macos. clang: clang++ -Werror (ubuntu).
+        compiler: [default, clang]
+        exclude:
+          - os: windows-latest
+            compiler: clang
+          - os: macos-latest
+            compiler: clang
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.22.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --filter '@playerthree/sidecar...'
+      - name: toolchain
+        run: |
+          case "$RUNNER_OS/${{ matrix.compiler }}" in
+            Linux/default)
+              san='-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer'
+              { echo "CXX=g++"; echo "CXXFLAGS=$san"; echo "LDFLAGS=$san"; } >> "$GITHUB_ENV"
+              # ASan's shadow layout predates 32-bit mmap randomization on newer runner kernels.
+              sudo sysctl -w vm.mmap_rnd_bits=28 ;;
+            Linux/clang)
+              { echo "CXX=clang++"; echo "CXXFLAGS=-Werror"; } >> "$GITHUB_ENV" ;;
+          esac
+          mkdir -p "$LOGS"
+      - run: cmake -S sdks/unreal -B build/unreal -DCMAKE_BUILD_TYPE=Debug "-DP3_REPO=$GITHUB_WORKSPACE"
+      - run: cmake --build build/unreal --config Debug --parallel
+      - run: ctest --test-dir build/unreal -C Debug --output-on-failure 2>&1 | tee "$LOGS/ctest.log"
+      - if: failure()
+        run: cp -r build/unreal/Testing "$LOGS/" || true
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logs-cpp-${{ matrix.compiler }}-${{ matrix.os }}
+          path: ci-logs
+          if-no-files-found: ignore

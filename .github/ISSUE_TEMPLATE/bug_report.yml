@@ -1,0 +1,46 @@
+name: Bug report
+description: Something is broken and you can reproduce it.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks! Security problems go to SECURITY.md, not here. Questions are faster on Discord.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw versus what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps, code or config. Room id or seed if you have it.
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Where / version
+      description: Package versions or commit
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Chrome 140 on Windows 11, WebGPU / WebGL
+  - type: input
+    id: harness
+    attributes:
+      label: Agent harness and model (if an agent was involved)
+      placeholder: Claude Code + Opus, Codex, OpenCode, oh-my-pi, custom policy…
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, screenshots, replays
+      description: Console output, server logs, screenshots. Remove any tokens first!

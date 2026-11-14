@@ -1,0 +1,14 @@
+PlayerThree
+Copyright 2026 The PlayerThree authors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+sdks/unreal vendors JSON for Modern C++ (nlohmann/json) 3.11.3, Copyright (c) 2013-2023 Niels Lohmann, under the MIT License; see sdks/unreal/NOTICE.
+
+tools/readme-art vendors the Bangers font (SIL Open Font License 1.1), the Special Elite font (Apache License 2.0) and Lucide icons (ISC License, Feather portions MIT) for the README art; see tools/readme-art/CREDITS.txt.
+
+site/src/logos vendors Simple Icons 16.37.0 marks (the collection is CC0 1.0) for Godot (logo by Andrea Calabró, CC BY 4.0), Node.js, TypeScript, Three.js and the Model Context Protocol; the marks remain trademarks of their owners.
+
+site/src/brand holds resized copies of the Agent Command square icon (docs/brand/agent-command-square.png and -dark.png in https://github.com/agent-command/agent-command), used with the maintainer's permission to link to the game.
+
+The "Agent Command" and "PlayerThree" names and logos are trademarks of the project maintainer and are not licensed under any of the licences in this repository.

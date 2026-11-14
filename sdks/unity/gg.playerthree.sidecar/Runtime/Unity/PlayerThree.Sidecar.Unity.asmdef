@@ -1,0 +1,14 @@
+{
+    "name": "PlayerThree.Sidecar.Unity",
+    "rootNamespace": "PlayerThree.Sidecar.Unity",
+    "references": ["PlayerThree.Sidecar"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

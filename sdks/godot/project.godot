@@ -1,0 +1,16 @@
+; Engine configuration file.
+; The PlayerThree Godot SDK: the addon (addons/playerthree), the Tug of War sample and the tests.
+
+config_version=5
+
+[application]
+
+config/name="PlayerThree Godot SDK"
+run/main_scene="res://samples/tug_of_war/main.tscn"
+config/features=PackedStringArray("4.7")
+; A dedicated server needs no unthrottled frames: 120 fps bounds the wait of between-tick host calls to ~8 ms.
+run/max_fps=120
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/playerthree/plugin.cfg")

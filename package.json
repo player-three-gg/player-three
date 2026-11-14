@@ -1,0 +1,38 @@
+{
+  "name": "playerthree-workspace",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/player-three-gg/player-three.git"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "site:dev": "pnpm --filter @playerthree/site dev",
+    "site:build": "pnpm --filter @playerthree/site build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "verify-pack": "node scripts/verify-pack.mjs",
+    "release": "node scripts/release.mjs",
+    "banners": "node tools/readme-art/render.mjs"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@types/node": "^26.6.6",
+    "playwright-core": "1.60.0",
+    "typescript": "7.0.2",
+    "vitest": "^5.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "7.0.2",
+      "mathjs": "^15.2.0"
+    }
+  }
+}
