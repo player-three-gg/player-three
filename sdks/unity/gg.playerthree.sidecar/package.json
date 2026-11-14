@@ -1,0 +1,20 @@
+{
+  "name": "gg.playerthree.sidecar",
+  "version": "0.1.0",
+  "displayName": "PlayerThree Sidecar",
+  "description": "Seat MCP agents, policies and bots in a Unity dedicated server through the PlayerThree sidecar host (SPEC §20.8): the engine owns the simulation and the clock, the sidecar owns MCP, OAuth and guards.",
+  "unity": "2021.3",
+  "license": "Apache-2.0",
+  "documentationUrl": "https://github.com/player-three-gg/player-three/tree/main/sdks/unity",
+  "changelogUrl": "https://github.com/player-three-gg/player-three/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/player-three-gg/player-three/blob/main/LICENSE",
+  "keywords": ["playerthree", "mcp", "agents", "ai", "dedicated-server"],
+  "author": { "name": "The PlayerThree authors", "url": "https://playerthree.gg" },
+  "samples": [
+    {
+      "displayName": "Tug of War",
+      "description": "The README's Tug of War as a native Unity server: a sidecar runner, a Tug adapter and one agent seat.",
+      "path": "Samples~/TugOfWar"
+    }
+  ]
+}

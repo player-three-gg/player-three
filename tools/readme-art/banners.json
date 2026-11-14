@@ -1,0 +1,74 @@
+{
+  "$comment": "README art, rendered by tools/readme-art/render.mjs (pnpm banners). Edit text here, run pnpm banners, and keep each README <img> alt text identical to the image text. Types: header, button, badges, card-grid, social (templates.mjs). Icons: icons/<name>.svg (Lucide).",
+  "palettes": {
+    "p3": {
+      "ink": "#07021a",
+      "tab": ["#ff9cc6", "#ff2e88", "#c3005a"],
+      "plate": ["#b8fff7", "#19e6d4", "#0bb3c9"],
+      "slip": ["#3a2470", "#170a33"],
+      "number": "#f4fbff",
+      "title": "#07021a",
+      "titleShadow": "#dafffb",
+      "subtitle": "#17d1c4",
+      "hazard": "#19e6d4",
+      "cream": "#f4fbff"
+    },
+    "ac": {
+      "ink": "#060000",
+      "tab": ["#ff6a4a", "#e30000", "#a80000"],
+      "plate": ["#fff2a0", "#ffd21f", "#ffae00"],
+      "slip": ["#6a1400", "#3a0000"],
+      "number": "#ffd21f",
+      "title": "#060000",
+      "titleShadow": "#fff6c2",
+      "subtitle": "#ffd21f",
+      "hazard": "#ffd21f",
+      "cream": "#fcfbe7"
+    }
+  },
+  "banners": [
+    { "id": "p3-for", "type": "header", "out": "docs/readme/p3-for.png", "palette": "p3", "number": "01", "title": "WHAT PLAYERTHREE IS FOR", "subtitle": "seats · teammates · arenas · bots", "icon": "send" },
+    { "id": "p3-build", "type": "header", "out": "docs/readme/p3-build.png", "palette": "p3", "number": "02", "title": "FOR GAME DEVELOPERS", "subtitle": "add agent seats to your game", "icon": "wrench" },
+    {
+      "id": "p3-engines",
+      "type": "card-grid",
+      "out": "docs/readme/p3-engines.png",
+      "palette": "p3",
+      "rows": [
+        {
+          "label": "NODE",
+          "tone": "plate",
+          "cards": [
+            { "icon": "server", "title": "NODE · TS", "subtitle": "server sdk" },
+            { "icon": "landmark", "title": "COLYSEUS", "subtitle": "room binding" },
+            { "icon": "app-window", "title": "ANY WEB CLIENT", "subtitle": "three.js · phaser · …" },
+            { "icon": "braces", "title": "YOUR TRANSPORT", "subtitle": "protocol.ts messages" }
+          ]
+        },
+        {
+          "label": "ENGINES",
+          "tone": "slip",
+          "cards": [
+            { "icon": "gamepad-2", "title": "GODOT", "subtitle": ["gdscript addon", "godot 4.5+"] },
+            { "icon": "box", "title": "UNITY", "subtitle": [".net core", "unity package"] },
+            { "icon": "mountain", "title": "UNREAL", "subtitle": ["c++17 core", "unreal plugin"] }
+          ]
+        }
+      ]
+    },
+    { "id": "p3-byoa", "type": "header", "out": "docs/readme/p3-byoa.png", "palette": "p3", "number": "03", "title": "BRING YOUR OWN AGENT", "subtitle": "one mcp url · browser sign-in", "icon": "bot" },
+    { "id": "p3-tacks", "type": "header", "out": "docs/readme/p3-tacks.png", "palette": "p3", "number": "04", "title": "BENCHMARKS", "subtitle": "series · held-out seeds · ratings", "icon": "chart-line" },
+    { "id": "p3-hood", "type": "header", "out": "docs/readme/p3-hood.png", "palette": "p3", "number": "05", "title": "HOW IT WORKS", "subtitle": "protocol · sandbox · storage", "icon": "settings" },
+    { "id": "p3-flagship", "type": "header", "out": "docs/readme/p3-flagship.png", "palette": "p3", "number": "06", "title": "AGENT COMMAND", "subtitle": "the flagship game", "icon": "flag" },
+    {
+      "id": "play",
+      "type": "button",
+      "out": "docs/readme/play.png",
+      "palette": "ac",
+      "title": "PLAY NOW",
+      "subtitle": "agentcommand.gg · free · in your browser"
+    },
+    { "id": "p3-community", "type": "header", "out": "docs/readme/p3-community.png", "palette": "p3", "number": "07", "title": "COMMUNITY", "subtitle": "discord · x · contributing", "icon": "message-square-text" },
+    { "id": "p3-reference", "type": "header", "out": "docs/readme/p3-reference.png", "palette": "p3", "number": "08", "title": "REFERENCE", "subtitle": "guides · concepts · development", "icon": "book-open" }
+  ]
+}

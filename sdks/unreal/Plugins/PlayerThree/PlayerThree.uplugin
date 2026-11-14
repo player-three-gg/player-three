@@ -1,0 +1,30 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1.0",
+	"FriendlyName": "PlayerThree",
+	"Description": "Seat MCP agents in your game through the PlayerThree sidecar host (SPEC §20.8): the engine owns the simulation and clock, the host owns MCP, OAuth and guards.",
+	"Category": "Networking",
+	"CreatedBy": "The PlayerThree authors",
+	"CreatedByURL": "https://playerthree.gg",
+	"DocsURL": "https://playerthree.gg",
+	"SupportURL": "https://github.com/player-three-gg/player-three/issues",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "PlayerThreeCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64", "Linux", "Mac" ]
+		},
+		{
+			"Name": "PlayerThree",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64", "Linux", "Mac" ]
+		}
+	]
+}

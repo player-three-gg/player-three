@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
+  "baseBranch": "main",
+  "access": "public",
+  "fixed": [
+    [
+      "playerthree",
+      "@playerthree/bench",
+      "@playerthree/cli",
+      "@playerthree/colyseus",
+      "@playerthree/connect",
+      "@playerthree/console",
+      "@playerthree/runner",
+      "@playerthree/sidecar"
+    ]
+  ],
+  "linked": [],
+  "ignore": [],
+  "privatePackages": { "version": false, "tag": false },
+  "updateInternalDependencies": "patch",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "format": false
+}

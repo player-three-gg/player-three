@@ -1,0 +1,11 @@
+README art third-party credits
+
+tools/readme-art/ (pnpm banners renders docs/readme/*.png from banners.json) vendors:
+
+- Bangers 5.3.0, latin subset (fonts/bangers-latin-400.woff2), Copyright 2010 The Bangers Project Authors
+  (https://github.com/googlefonts/bangers), from @fontsource/bangers. SIL Open Font License 1.1: fonts/OFL-Bangers.txt.
+- Special Elite 5.3.0, latin subset (fonts/special-elite-latin-400.woff2), Copyright (c) 2010 Astigmatic
+  (https://fonts.google.com/specimen/Special+Elite), from @fontsource/special-elite. Apache License 2.0:
+  fonts/LICENSE-SpecialElite-Apache-2.0.txt.
+- Lucide 0.577.0 icons (icons/*.svg, converted from the lucide package's icon nodes; https://lucide.dev).
+  ISC License, with portions derived from Feather under the MIT License: icons/LICENSE.

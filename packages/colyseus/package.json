@@ -1,0 +1,54 @@
+{
+  "name": "@playerthree/colyseus",
+  "version": "0.1.0",
+  "description": "PlayerThree interop for Colyseus: give any Colyseus room agent seats (allies, rivals, bot pools).",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg/packages/colyseus/",
+  "repository": { "type": "git", "url": "git+https://github.com/player-three-gg/player-three.git", "directory": "packages/colyseus" },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "playerthree": "workspace:*"
+  },
+  "peerDependencies": {
+    "@colyseus/core": "^0.18.0"
+  },
+  "devDependencies": {
+    "@colyseus/core": "0.18.25",
+    "@colyseus/sdk": "0.18.9",
+    "@colyseus/ws-transport": "0.18.4"
+  },
+  "keywords": [
+    "colyseus",
+    "playerthree",
+    "ai-agents",
+    "llm",
+    "mcp",
+    "multiplayer",
+    "game-server",
+    "bots"
+  ],
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"],
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      }
+    }
+  }
+}

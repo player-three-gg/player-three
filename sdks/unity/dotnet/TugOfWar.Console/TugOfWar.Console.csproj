@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>PlayerThree.Samples.TugOfWar</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The same engine-independent game the Unity sample uses. -->
+    <Compile Include="../../gg.playerthree.sidecar/Samples~/TugOfWar/TugOfWar.cs" />
+    <ProjectReference Include="../PlayerThree.Sidecar/PlayerThree.Sidecar.csproj" />
+  </ItemGroup>
+</Project>

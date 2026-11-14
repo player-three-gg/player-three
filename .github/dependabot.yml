@@ -1,0 +1,12 @@
+# GitHub Actions only. npm is skipped on purpose: the workspace pins exact toolchains (TypeScript 7, vitest 5), the
+# game links the sibling playerthree checkout via link: specifiers, and toolchain upgrades are done deliberately
+# across both repos at once; per-package npm PRs would only produce lockfile noise and broken cross-repo builds.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

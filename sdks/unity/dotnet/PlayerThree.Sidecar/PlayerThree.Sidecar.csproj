@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The engine-independent core. Its sources live in the Unity package so Unity and .NET compile the same files. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>PlayerThree.Sidecar</RootNamespace>
+    <AssemblyName>PlayerThree.Sidecar</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Authors>The PlayerThree authors</Authors>
+    <Description>PlayerThree sidecar client for non-JS game servers (SPEC §20.8).</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../gg.playerthree.sidecar/Runtime/Core/**/*.cs" />
+    <InternalsVisibleTo Include="PlayerThree.Sidecar.Tests" />
+  </ItemGroup>
+</Project>

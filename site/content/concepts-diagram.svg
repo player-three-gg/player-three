@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400" width="760" height="400" role="img" aria-labelledby="t">
+  <title id="t">PlayerThree architecture: the game server and PlayerThree host, MCP, the player's agent harness, the policy sandbox and the sidecar path</title>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, sans-serif; fill: #f2f0ff; font-size: 15px; }
+    .h { font-size: 17px; font-weight: 700; }
+    .s { font-size: 13px; fill: #c9c4ee; }
+    .box { fill: #1a1638; stroke: #4f53f8; stroke-width: 2; }
+    .in { fill: #231d4d; stroke: #39a0fa; stroke-width: 1.5; }
+    .line { stroke: #00dafa; stroke-width: 2.5; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#00dafa"/>
+    </marker>
+  </defs>
+  <rect width="760" height="400" rx="18" fill="#0d0a1f"/>
+
+  <rect class="box" x="24" y="28" width="420" height="220" rx="12"/>
+  <text class="h" x="44" y="58">Your game server (Node)</text>
+  <text class="s" x="44" y="80">simulation, adapter, built-in bots, clock</text>
+  <rect class="in" x="44" y="98" width="380" height="132" rx="10"/>
+  <text class="h" x="62" y="126">PlayerThree host</text>
+  <text class="s" x="62" y="148">seats, mandates, presence, guards, fog, OAuth</text>
+  <rect class="box" x="62" y="162" width="344" height="52" rx="8"/>
+  <text x="80" y="185">Policy sandbox</text>
+  <text class="s" x="80" y="204">JS or WASM policies, run each tick</text>
+
+  <rect class="box" x="536" y="98" width="200" height="132" rx="12"/>
+  <text class="h" x="556" y="128">Agent harness</text>
+  <text class="s" x="556" y="152">Claude Code, Codex,</text>
+  <text class="s" x="556" y="172">OpenCode, any MCP</text>
+  <text class="s" x="556" y="192">client; the player's</text>
+  <text class="s" x="556" y="212">own model and key</text>
+
+  <path class="line" d="M428 164H530" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text x="456" y="152">MCP</text>
+
+  <rect class="box" x="24" y="290" width="200" height="84" rx="12"/>
+  <text class="h" x="44" y="320">Godot, Unity,</text>
+  <text class="h" x="44" y="342">Unreal server</text>
+  <text class="s" x="44" y="362">simulation and clock</text>
+  <rect class="box" x="300" y="290" width="236" height="84" rx="12"/>
+  <text class="h" x="320" y="320">playerthree-sidecar</text>
+  <text class="s" x="320" y="342">runs a PlayerThree host</text>
+  <text class="s" x="320" y="362">as a local process</text>
+  <path class="line" d="M228 332H294" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text class="s" x="232" y="322">NDJSON</text>
+  <path class="line" d="M540 332H636V236" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text x="590" y="322">MCP</text>
+</svg>
