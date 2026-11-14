@@ -36,14 +36,14 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 10.22.0
       # No dependency cache in release builds (cache poisoning).
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 26
       - run: pnpm install --frozen-lockfile
@@ -62,15 +62,15 @@ jobs:
     env:
       NPM_CONFIG_PROVENANCE: ${{ github.event.repository.private && 'false' || 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 10.22.0
       # registry-url writes an .npmrc that reads NODE_AUTH_TOKEN. Node 26 bundles npm 11.5.1+, which OIDC needs.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 26
           registry-url: https://registry.npmjs.org
