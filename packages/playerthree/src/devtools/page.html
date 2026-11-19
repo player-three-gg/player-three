@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>PlayerThree DevTools</title>
+<link rel="icon" type="image/png" href="__ICON__">
+<style nonce="__NONCE__">/*__CSS__*/</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#overview" aria-label="PlayerThree DevTools: overview">
+    <img id="logo" src="__LOGO__" alt="" width="100" height="32">
+    <span>DevTools</span>
+  </a>
+  <div class="top-game" id="topGame"></div>
+  <div class="spacer"></div>
+  <div class="conn" id="conn" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span class="label" id="connLabel">connecting</span></div>
+  <button type="button" class="ghost" id="signOut" hidden>Sign out</button>
+</header>
+
+<div class="banner bad" id="netBanner" role="alert" hidden>Lost contact with the game server. Showing the last data received; retrying automatically.</div>
+
+<div class="shell" id="shell" hidden>
+  <nav class="nav" aria-label="Console sections">
+    <ul class="nav-list">
+      <li><a href="#overview" data-section="overview"><span>Overview</span></a></li>
+      <li><a href="#sessions" data-section="sessions"><span>Sessions</span></a></li>
+      <li><a href="#agents" data-section="agents"><span>Agents</span></a></li>
+      <li><a href="#policies" data-section="policies"><span>Policies</span></a></li>
+      <li><a href="#bench" data-section="bench"><span>Bench</span></a></li>
+      <li><a href="#safety" data-section="safety"><span>Safety</span></a></li>
+      <li><a href="#settings" data-section="settings"><span>Game settings</span></a></li>
+    </ul>
+    <div class="nav-foot">
+      <div class="nav-access" id="navAccess"></div>
+      <div class="keys-title">Keyboard</div>
+      <dl class="keys">
+        <dt><kbd>g</kbd> + <kbd>o</kbd>…<kbd>t</kbd></dt><dd>go to section</dd>
+        <dt><kbd>1</kbd>…<kbd>7</kbd></dt><dd>same, by number</dd>
+        <dt><kbd>/</kbd></dt><dd>filter agents</dd>
+        <dt><kbd>[</kbd> <kbd>]</kbd></dt><dd>step tick</dd>
+        <dt><kbd>l</kbd></dt><dd>back to live</dd>
+        <dt><kbd>p</kbd></dt><dd>pause feed</dd>
+        <dt><kbd>Esc</kbd></dt><dd>close dialog</dd>
+      </dl>
+    </div>
+  </nav>
+
+  <main class="main" id="main">
+    <!-- Overview -->
+    <section class="view" id="view-overview" aria-labelledby="ovTitle" hidden>
+      <div class="game-head">
+        <div class="game-id">
+          <h1 id="ovTitle" tabindex="-1">Overview</h1>
+          <div class="meta-row">
+            <span class="chip mono" id="ovId" title="Game id @ version"></span>
+            <span class="chip" id="ovRate"></span>
+            <span class="hash"><span class="hash-label">surface</span><code id="ovHash"></code><button type="button" class="ghost sm" id="ovCopy" aria-label="Copy surface hash">Copy</button></span>
+          </div>
+          <div class="modes"><span class="modes-label">Modes</span><span class="chips" id="ovModes"></span></div>
+        </div>
+        <div class="access-box" id="ovAccess"></div>
+      </div>
+      <div id="ovBody"></div>
+    </section>
+
+    <!-- Sessions list -->
+    <section class="view" id="view-sessions" aria-labelledby="slTitle" hidden>
+      <div class="view-head">
+        <h1 id="slTitle" tabindex="-1">Sessions</h1>
+        <p class="lede">Every match your game is running, ended matches the host still holds, and recent sessions it has released. Open one to watch its agents live, scrub its timeline from any perspective, export its replay or end it. Refreshes every 2 s.</p>
+      </div>
+      <div id="slBody"></div>
+    </section>
+
+    <!-- Session detail -->
+    <section class="view" id="view-session" aria-labelledby="sdTitle" hidden>
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="#sessions" id="sdCrumb">Sessions</a><span class="sep" aria-hidden="true">/</span>
+        <label class="switcher" id="sdSwitchWrap"><span class="sr">Switch session</span><select id="sdSwitch"></select></label>
+      </nav>
+      <p class="note-line" id="sdNote" role="status" aria-live="polite"></p>
+      <div id="sdState"></div>
+      <div id="sdMain" hidden>
+        <div class="sd-head">
+          <div class="sd-title">
+            <h1 id="sdTitle" class="mono" tabindex="-1"></h1>
+            <div class="meta-row" id="sdMeta"></div>
+          </div>
+          <div class="sd-actions" id="sdActions">
+            <button type="button" class="ghost" id="sdExport">Export replay</button>
+            <button type="button" class="danger" id="sdEnd">End session…</button>
+            <span class="hint" id="sdEndHint" hidden>Already ended: the outcome is recorded.</span>
+          </div>
+        </div>
+        <div class="banner info" id="sdReplayBanner" hidden>
+          <span id="sdReplayText"></span>
+          <button type="button" class="ghost" id="sdReplayExit">Back to live session</button>
+        </div>
+        <section class="box record" id="sdRecord" aria-label="Session record" hidden></section>
+        <div class="sd-controls">
+          <div class="persp">
+            <span class="ctl-label" id="perspLabel">Perspective</span>
+            <div class="seg wrap" role="radiogroup" aria-labelledby="perspLabel" id="sdPersp"></div>
+          </div>
+          <div class="timeline" role="group" aria-label="Timeline">
+            <button type="button" class="ghost" id="tlBack" aria-label="Previous tick" title="Previous tick ( [ )">−1</button>
+            <input type="range" id="tlRange" min="0" max="0" value="0" step="1" aria-label="Timeline tick">
+            <button type="button" class="ghost" id="tlFwd" aria-label="Next tick" title="Next tick ( ] )">+1</button>
+            <button type="button" class="ghost" id="tlLive" aria-pressed="true" title="Back to live ( l )">Live</button>
+            <span id="tlStatus" class="tl-status"></span>
+            <button type="button" class="ghost" id="tlLoad">Load replay file…</button>
+            <input type="file" id="tlFile" accept=".json,application/json" hidden>
+          </div>
+        </div>
+        <div class="sd-grid" id="sdGrid">
+          <aside class="col" aria-labelledby="seatsTitle">
+            <div class="col-head"><h2 id="seatsTitle">Seats</h2></div>
+            <div class="seats" id="sdSeats"></div>
+          </aside>
+          <section class="col" aria-labelledby="panelTitle">
+            <div class="col-head">
+              <h2 id="panelTitle">View</h2>
+              <div class="tabs" role="tablist" aria-label="Perspective panel" id="sdTabs">
+                <button type="button" role="tab" id="tab-view" data-tab="view" aria-controls="panel-view" aria-selected="true">View</button>
+                <button type="button" role="tab" id="tab-policy" data-tab="policy" aria-controls="panel-policy" aria-selected="false" tabindex="-1">Policy</button>
+                <button type="button" role="tab" id="tab-practice" data-tab="practice" aria-controls="panel-practice" aria-selected="false" tabindex="-1">Practice</button>
+              </div>
+            </div>
+            <div class="panel" role="tabpanel" id="panel-view" aria-labelledby="tab-view">
+              <div class="obs-meta" id="viewMeta"></div>
+              <details class="near" id="viewNear" hidden><summary id="viewNearSum"></summary><ol class="feed near-list" id="viewNearList"></ol></details>
+              <div class="tree" id="viewTree"></div>
+            </div>
+            <div class="panel" role="tabpanel" id="panel-policy" aria-labelledby="tab-policy" hidden>
+              <div class="stats" id="policyStats"></div>
+              <div id="policyMore">
+                <div class="sub">Call time (ms), last 120 calls <span class="muted">· dashed line: per-call budget · red dots: failed calls</span></div>
+                <svg id="spark" class="spark" viewBox="0 0 600 90" preserveAspectRatio="none" role="img" aria-label="Policy call time"></svg>
+                <div class="sub">Rejected intents</div>
+                <div id="policyRejected" class="chips"></div>
+                <div class="sub">Logs <span class="muted">(the policy's own log() output)</span></div>
+                <pre class="logs" id="policyLogs" tabindex="0"></pre>
+              </div>
+            </div>
+            <div class="panel" role="tabpanel" id="panel-practice" aria-labelledby="tab-practice" hidden>
+              <table class="table runs"><thead><tr><th scope="col">time</th><th scope="col">opponent</th><th scope="col">ticks</th><th scope="col">outcome</th><th scope="col">policy calls</th><th scope="col">wall</th></tr></thead><tbody id="runs"></tbody></table>
+              <div class="tree" id="runReport"></div>
+            </div>
+          </section>
+          <section class="col" id="feedCol" aria-labelledby="feedTitle">
+            <div class="col-head">
+              <h2 id="feedTitle">Feed</h2>
+              <label class="toggle"><input type="checkbox" id="onlySeat"> this seat</label>
+              <button type="button" class="ghost" id="pause" aria-pressed="false" title="Pause the feed ( p )">Pause</button>
+              <div class="seg" role="radiogroup" aria-label="Feed filter" id="filters">
+                <button type="button" role="radio" data-f="agent" aria-checked="true" title="Agent and owner intents, plus control changes">Agent</button>
+                <button type="button" role="radio" data-f="policy" aria-checked="false" tabindex="-1" title="Intents emitted by deployed policies">Policy</button>
+                <button type="button" role="radio" data-f="rejected" aria-checked="false" tabindex="-1" title="Refused intents, failed deploys and guard drops">Rejected</button>
+                <button type="button" role="radio" data-f="control" aria-checked="false" tabindex="-1" title="Controller, mandate, deploy, practice and match events">Control</button>
+                <button type="button" role="radio" data-f="all" aria-checked="false" tabindex="-1" title="Everything, including bot intents">All</button>
+              </div>
+            </div>
+            <ol class="feed" id="feed" aria-live="off" aria-label="Session feed, newest first"></ol>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agents -->
+    <section class="view" id="view-agents" aria-labelledby="agTitle" hidden>
+      <div class="view-head">
+        <h1 id="agTitle" tabindex="-1">Agents</h1>
+        <p class="lede">Every owner with a commander roster: one commander per role, the agents signed in for them, and what they did recently. Rotate a commander's token or revoke a sign-in here. Refreshes every 2 s.</p>
+      </div>
+      <div class="toolbar">
+        <label class="search"><span class="sr">Filter owners by id</span><input type="search" id="agFilter" placeholder="Filter by owner id" autocomplete="off" spellcheck="false" aria-describedby="agCount"><kbd aria-hidden="true">/</kbd></label>
+        <span class="muted" id="agCount" aria-live="polite"></span>
+        <button type="button" class="ghost" id="agMore" hidden>Show up to 500</button>
+      </div>
+      <p class="note-line" id="agNotice" role="status" aria-live="polite"></p>
+      <p class="quiet" id="agOauthNote" hidden>Sign-in connections appear here when the game passes its OAuth server to the console.</p>
+      <div id="agBody"></div>
+    </section>
+
+    <!-- Policies -->
+    <section class="view" id="view-policies" aria-labelledby="poTitle" hidden>
+      <div class="view-head">
+        <h1 id="poTitle" tabindex="-1">Policies</h1>
+        <p class="lede">Every owner's policy library per role, the bot pool other players fight, and how policies fail: crashes, timeouts and errors. Disable or unpublish pool entries here. Refreshes every 2 s.</p>
+      </div>
+      <p class="note-line" id="poNotice" role="status" aria-live="polite"></p>
+      <div id="poBody"></div>
+    </section>
+
+    <!-- Bench -->
+    <section class="view" id="view-bench" aria-labelledby="bnTitle" hidden>
+      <div class="view-head">
+        <h1 id="bnTitle" tabindex="-1">Bench</h1>
+        <p class="lede">Read-only canonical series results: entrant standings, ratings, usage coverage, decision latency and recording completeness. Accepted matches and excluded attempts retain their entrant-to-side schedules; available replay artifacts open in the timeline. Series are started from the command line.</p>
+      </div>
+      <div class="toolbar"><button type="button" class="ghost" id="bnReload">Reload</button></div>
+      <div id="bnBody"></div>
+    </section>
+
+    <!-- Safety -->
+    <section class="view" id="view-safety" aria-labelledby="sfTitle" hidden>
+      <div class="view-head">
+        <h1 id="sfTitle" tabindex="-1">Safety</h1>
+        <p class="lede">What agents can see and do on this server: the surface hash, enabled modes and their limits, default seat scopes, the game's Safety Card, and which inputs get refused. Refreshes every 2 s.</p>
+      </div>
+      <div id="sfBody"></div>
+    </section>
+
+    <!-- Game settings -->
+    <section class="view" id="view-settings" aria-labelledby="stTitle" hidden>
+      <div class="view-head">
+        <h1 id="stTitle" tabindex="-1">Game settings</h1>
+        <p class="lede">The game's match options, the server's defaults and the options each live or recent session runs with. Read-only: rules are the game's to define and your server's to pass. Refreshes every 2 s.</p>
+      </div>
+      <div id="stBody"></div>
+    </section>
+  </main>
+</div>
+
+<div class="gate" id="gate">
+  <div class="card" id="gateLoading" role="status"><p class="muted">Connecting to the console…</p></div>
+  <form class="card" id="tokenForm" hidden novalidate>
+    <img class="card-logo" alt="" width="100" height="32">
+    <h1>Sign in to the operator console</h1>
+    <p>This console is protected by an operator token. Paste the operator token configured on your game server. It is kept in this browser tab only and is forgotten when the tab closes.</p>
+    <p class="err" id="tokenErr" role="alert"></p>
+    <label class="field"><span>Operator token</span><input id="tokenInput" type="password" autocomplete="off" spellcheck="false"></label>
+    <button type="submit" class="primary">Open console</button>
+  </form>
+  <div class="card" id="gateError" hidden role="alert">
+    <img class="card-logo" alt="" width="100" height="32">
+    <h1 id="gateTitle"></h1>
+    <p id="gateBody"></p>
+    <p class="gate-detail mono" id="gateDetail" hidden></p>
+    <div class="row">
+      <button type="button" class="primary" id="gateRetry">Try again</button>
+      <a class="ghost btn" id="gateLink" hidden></a>
+    </div>
+  </div>
+</div>
+
+<dialog id="endDialog" aria-labelledby="endTitle" aria-describedby="endBody">
+  <div class="dlg">
+    <h2 id="endTitle">End session</h2>
+    <p id="endBody">The match stops now with the outcome you pick. Agents, policies and bots can no longer act in it, and it stays listed as ended until the host releases it. This cannot be undone.</p>
+    <fieldset class="choices"><legend>Outcome</legend><div id="endChoices"></div></fieldset>
+    <p class="err" id="endErr" role="alert"></p>
+    <div class="dlg-actions">
+      <button type="button" class="ghost" id="endCancel">Cancel</button>
+      <button type="button" class="danger solid" id="endConfirm">End session</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="confirmDialog" aria-labelledby="cfTitle" aria-describedby="cfBody">
+  <div class="dlg">
+    <h2 id="cfTitle"></h2>
+    <p class="dlg-target mono" id="cfTarget"></p>
+    <p id="cfBody"></p>
+    <p class="err" id="cfErr" role="alert"></p>
+    <div class="dlg-actions">
+      <button type="button" class="ghost" id="cfCancel">Cancel</button>
+      <button type="button" class="danger solid" id="cfOk"></button>
+    </div>
+  </div>
+</dialog>
+<script nonce="__NONCE__">/*__JS__*/</script>
+</body>
+</html>

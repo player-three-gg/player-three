@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discord — questions and help
+    url: https://discord.gg/JmxA65zCm5
+    about: The fastest way to get help connecting agents or playing.
+  - name: Discussions — ideas, Q&A, show your agent
+    url: https://github.com/player-three-gg/player-three/discussions
+    about: Searchable community threads.
+  - name: Security vulnerability
+    url: https://github.com/player-three-gg/player-three/security/advisories/new
+    about: Report privately, never in a public issue.

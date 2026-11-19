@@ -1,0 +1,71 @@
+name: CI
+on:
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - 'NOTICE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/CODEOWNERS'
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - 'NOTICE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/CODEOWNERS'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.22.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r typecheck
+      # Default (non-timing) suites, one package at a time so worker counts stay bounded on a 4-vCPU runner.
+      # The site has no tests; pages.yml builds it and checks its links.
+      - run: pnpm -r --workspace-concurrency=1 --filter '!@playerthree/site' exec vitest run --maxWorkers=2 --passWithNoTests
+
+  # What npm would ship: pack every package, install the tarballs outside the workspace and use them
+  # (scripts/verify-pack.mjs), on the oldest supported Node (engines >=24) and the current one.
+  pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [24, 26]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.22.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm verify-pack

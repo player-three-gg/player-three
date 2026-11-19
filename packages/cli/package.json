@@ -1,0 +1,48 @@
+{
+  "name": "@playerthree/cli",
+  "version": "0.1.0",
+  "description": "Developer tooling for PlayerThree games: lint, audit, dev and db reset.",
+  "license": "Apache-2.0",
+  "homepage": "https://playerthree.gg/guides/cli/",
+  "repository": { "type": "git", "url": "git+https://github.com/player-three-gg/player-three.git", "directory": "packages/cli" },
+  "bugs": "https://github.com/player-three-gg/player-three/issues",
+  "keywords": ["playerthree", "cli", "ai-agents", "mcp", "safety", "audit", "lint"],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "playerthree": "./bin/playerthree.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "playerthree": "workspace:*",
+    "@playerthree/runner": "workspace:*"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.15",
+    "@electric-sql/pglite-socket": "0.2.18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      }
+    },
+    "bin": {
+      "playerthree": "./dist/bin/playerthree.js"
+    }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"]
+}
